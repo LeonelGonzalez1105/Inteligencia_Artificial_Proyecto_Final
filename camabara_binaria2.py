@@ -6,9 +6,9 @@ import tensorflow as tf
 print("Cargando cerebro digital (Nivel 2)...")
 try:
     model = tf.keras.models.load_model('ia_numeros.keras')
-    print("✅ Modelo cargado.")
+    print(" Modelo cargado.")
 except:
-    print("❌ Error: No se encuentra 'ia_numeros.keras'.")
+    print(" Error: No se encuentra 'ia_numeros.keras'.")
     exit()
 
 # --- 2. FUNCIÓN DE INGENIERÍA: PREPROCESADO ---
@@ -17,26 +17,25 @@ def preparar_digito(imagen_recortada):
     Toma un recorte de número (ej. un '1' alto y flaco) y lo pone 
     en un cuadro negro cuadrado de 28x28 sin deformarlo.
     """
-    # Escala de grises y umbralizado (si no viene ya procesado)
+    # Escala de grises y umbralizado 
     if len(imagen_recortada.shape) > 2:
         gray = cv2.cvtColor(imagen_recortada, cv2.COLOR_BGR2GRAY)
         _, thresh = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY_INV)
     else:
         thresh = imagen_recortada
 
-    # Hacer el número más grueso (Dilatación) para que se parezca a MNIST
+    # Hacer el número más grueso
     kernel = np.ones((5, 5), np.uint8)
     thresh = cv2.dilate(thresh, kernel, iterations=1)
 
-    # Mantener la relación de aspecto (Aspect Ratio)
     alto, ancho = thresh.shape
     
-    # Queremos meterlo en un cuadro de 20x20 (dejando 4px de margen)
-    if alto > ancho: # Es más alto que ancho (ej. un 1)
+    # Queremos meterlo en un cuadro de 20x20
+    if alto > ancho: 
         factor = 20.0 / alto
         nuevo_alto = 20
         nuevo_ancho = int(ancho * factor)
-    else: # Es más ancho que alto
+    else: 
         factor = 20.0 / ancho
         nuevo_ancho = 20
         nuevo_alto = int(alto * factor)
@@ -70,14 +69,14 @@ cap = cv2.VideoCapture(0)
 cap.set(3, 640)
 cap.set(4, 480)
 
-print("--- 🚀 SISTEMA NIVEL 2 INICIADO ---")
+print("--- SISTEMA NIVEL 2 INICIADO ---")
 
 while True:
     ret, frame = cap.read()
     if not ret: break
     
-    # Definir zona de detección (ROI) más ancha para caber varios números
-    x1, y1, x2, y2 = 100, 100, 540, 300 # Rectángulo ancho
+    # Definir zona de detección (ROI) 
+    x1, y1, x2, y2 = 100, 100, 540, 300 
     roi_color = frame[y1:y2, x1:x2].copy()
     
     # Preprocesamiento general del ROI
